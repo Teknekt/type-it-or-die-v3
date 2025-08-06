@@ -2,153 +2,206 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Type It or Die</title>
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651" crossorigin="anonymous"></script>
 
   <!-- Supabase SDK -->
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.25.1/dist/supabase.min.js"></script>
 
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0e0e0e;
       color: white;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
       padding: 20px;
     }
     .game-container {
+      text-align: center;
       max-width: 600px;
-      margin: 0 auto;
+      width: 100%;
+      background: #1b1b1b;
+      padding: 20px;
+      border-radius: 10px;
+      box-sizing: border-box;
     }
-    #word {
-      font-size: 2rem;
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.3rem;
+    }
+    p {
+      margin-top: 0;
+      color: #bbb;
+    }
+    .word-display {
+      font-size: 2.2rem;
       margin: 20px 0;
+      min-height: 2.5rem;
+      user-select: none;
     }
-    input[type="text"] {
+    input[type=text] {
       padding: 10px;
       font-size: 1.2rem;
       width: 100%;
-      max-width: 400px;
-      margin-bottom: 10px;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 15px;
+      outline: none;
     }
     .info {
-      margin: 10px 0;
-      font-size: 1.1rem;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 1.2rem;
+      font-weight: 600;
     }
-    #leaderboard {
+    .leaderboard {
       margin-top: 30px;
       background: #222;
-      padding: 20px;
-      border-radius: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      color: #eee;
+      max-height: 300px;
+      overflow-y: auto;
     }
-    #startBtn {
-      margin-top: 10px;
+    .leaderboard h3 {
+      margin-top: 0;
+    }
+    .leaderboard ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+    button {
+      margin: 10px 0;
       padding: 10px 20px;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
       background: #2e8b57;
       color: white;
-      border: none;
-      border-radius: 5px;
       cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease;
     }
-    .adsbygoogle {
-      margin-top: 30px;
+    button:hover {
+      background: #246b44;
+    }
+    #nameInputContainer.hide {
+      display: none;
     }
   </style>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651"
+     crossorigin="anonymous"></script>
+
 </head>
 <body>
+
   <div class="game-container">
     <h1>Type It or Die</h1>
-    <p>Type fast before time runs out! Bonus time for hard words.</p>
+    <p>Type the words fast! Miss one and it's over. Bonus time for hard words.</p>
 
-    <input type="text" id="username" placeholder="Enter your name..." />
-    <button id="startBtn">Start Game</button>
-
-    <div id="word"></div>
-    <input type="text" id="text" placeholder="Type here..." disabled />
-
-    <div class="info">
-      <div>Time: <span id="time">10</span>s | Score: <span id="score">0</span></div>
+    <div id="nameInputContainer">
+      <input type="text" id="nameInput" placeholder="Enter your name here" maxlength="20" />
     </div>
 
-    <div id="leaderboard">
+    <button id="startBtn">Start Game</button>
+
+    <div class="word-display" id="word"></div>
+
+    <input type="text" id="text" autocomplete="off" placeholder="Type here..." style="display:none;" />
+
+    <div class="info" style="display:none;" id="gameInfo">
+      <div>Time: <span id="time">10</span>s</div>
+      <div>Score: <span id="score">0</span></div>
+    </div>
+
+    <div class="leaderboard" id="leaderboard">
       <h3>🏆 Global Highscores</h3>
       <ul id="scores"></ul>
     </div>
 
-    <div>
+    <div class="share-buttons" style="margin-top: 20px;">
       <button onclick="shareTwitter()">Share on Twitter</button>
       <button onclick="shareFacebook()">Share on Facebook</button>
     </div>
 
-    <!-- AdSense Block -->
+    <!-- Google AdSense Ins -->
     <ins class="adsbygoogle"
-         style="display:block"
+         style="display:block; text-align:center; margin-top: 30px"
          data-ad-client="ca-pub-7723689755297651"
          data-ad-slot="6475259413"
          data-ad-format="auto"
          data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-
-    <!-- Sound -->
-    <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
-    <audio id="failSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
   </div>
 
+  <!-- Sounds -->
+  <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
+  <audio id="failSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+
   <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+
+    // Word lists
+    // (Fler än 500 ord kan läggas i samma format)
     const easyWords = [
-      "apple", "sun", "cat", "ball", "car", "dog", "home", "fish", "star", "cake",
-      "milk", "book", "pen", "tree", "shoe", "hat", "door", "clock", "cloud", "cup",
-      "nose", "hand", "moon", "grass", "light", "ring", "bike", "mouse", "chair", "phone",
-      "bread", "candy", "beach", "train", "water", "flower", "smile", "truck", "glass", "paper",
-      // + more simple words...
+      "apple","sun","cat","ball","car","dog","home","fish","star","cake","milk","book","pen","tree","shoe",
+      "door","bird","rain","snow","moon","cloud","grass","hat","cup","key","bird","fish","leaf","girl","boy",
+      // ... (lägg till fler ord efter behov)
     ];
-
     const hardWords = [
-      "algorithm", "hypothesis", "cryptography", "juxtaposition", "miscellaneous",
-      "xenophobia", "onomatopoeia", "subcutaneous", "photosynthesis", "infrastructure"
+      "algorithm","hypothesis","cryptography","juxtaposition","miscellaneous",
+      "photosynthesis","metamorphosis","parliament","philosophy","architecture",
+      // ... (lägg till fler svåra ord)
     ];
+    // Kombinera alla ord
+    const allWords = [...easyWords, ...hardWords];
 
-    const extraWords = [...Array(400)].map(() => {
-      const length = Math.floor(Math.random() * 5) + 3;
-      return Array(length).fill().map(() => String.fromCharCode(97 + Math.floor(Math.random() * 26))).join('');
-    });
-
-    const words = [...easyWords, ...hardWords, ...extraWords];
-
-    const usernameInput = document.getElementById("username");
-    const textInput = document.getElementById("text");
+    // DOM Elements
     const wordEl = document.getElementById("word");
+    const textInput = document.getElementById("text");
+    const nameInput = document.getElementById("nameInput");
+    const nameInputContainer = document.getElementById("nameInputContainer");
+    const startBtn = document.getElementById("startBtn");
     const scoreEl = document.getElementById("score");
     const timeEl = document.getElementById("time");
+    const gameInfo = document.getElementById("gameInfo");
     const scoresList = document.getElementById("scores");
-    const startBtn = document.getElementById("startBtn");
     const successSound = document.getElementById("successSound");
     const failSound = document.getElementById("failSound");
 
-    const supabase = window.supabase.createClient(
-      "https://wtzfzuragddwggmdemqf.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0"
-    );
+    // Supabase init
+    const supabaseUrl = "https://wtzfzuragddwggmdemqf.supabase.co";
+    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0";
+    const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-    let currentWord = "";
+    // Game state
     let score = 0;
     let time = 10;
-    let timer;
+    let currentWord = "";
+    let timerInterval;
     let playerName = "";
 
     function getRandomWord() {
-      return words[Math.floor(Math.random() * words.length)];
+      const idx = Math.floor(Math.random() * allWords.length);
+      return allWords[idx];
     }
 
     function displayWord() {
       currentWord = getRandomWord();
       wordEl.innerText = currentWord;
+    }
+
+    function updateScore() {
+      score++;
+      scoreEl.innerText = score;
     }
 
     function updateTime(bonus = 0) {
@@ -157,43 +210,29 @@
     }
 
     function gameOver() {
-      clearInterval(timer);
-      textInput.disabled = true;
       failSound.play();
-      if (playerName) saveScore(playerName, score);
+      clearInterval(timerInterval);
+      textInput.disabled = true;
+      alert(`Game Over! Your score: ${score}`);
+      saveScore(score);
+      startBtn.disabled = false;
+      startBtn.innerText = "Play Again";
+      nameInputContainer.classList.remove("hide");
+      textInput.style.display = "none";
+      gameInfo.style.display = "none";
+      wordEl.innerText = "";
     }
 
-    function updateScore() {
-      score++;
-      scoreEl.innerText = score;
-    }
-
-    function startGame() {
-      playerName = usernameInput.value.trim();
-      if (!playerName) {
-        alert("Please enter your name!");
-        return;
+    async function saveScore(score) {
+      if (!playerName) return; // if no name, skip saving
+      const { data, error } = await supabase
+        .from("highscores")
+        .insert([{ name: playerName, score }]);
+      if (error) {
+        console.error("Failed to save score:", error);
+      } else {
+        loadScores();
       }
-      usernameInput.style.display = "none";
-      startBtn.style.display = "none";
-      textInput.disabled = false;
-      textInput.focus();
-      score = 0;
-      time = 10;
-      scoreEl.innerText = score;
-      timeEl.innerText = time;
-      displayWord();
-
-      timer = setInterval(() => {
-        time--;
-        timeEl.innerText = time;
-        if (time <= 0) gameOver();
-      }, 1000);
-    }
-
-    async function saveScore(name, score) {
-      const { error } = await supabase.from("highscores").insert([{ name, score }]);
-      if (!error) loadScores();
     }
 
     async function loadScores() {
@@ -202,40 +241,86 @@
         .select("*")
         .order("score", { ascending: false })
         .limit(10);
-      if (!error) {
-        scoresList.innerHTML = data.map(entry => `<li>${entry.name}: ${entry.score}</li>`).join("");
+      if (error) {
+        console.error("Failed to load scores:", error);
+        return;
       }
+      scoresList.innerHTML = "";
+      data.forEach(({ name, score }) => {
+        const li = document.createElement("li");
+        li.innerText = `${name}: ${score}`;
+        scoresList.appendChild(li);
+      });
     }
 
-    function shareTwitter() {
-      const url = encodeURIComponent(window.location.href);
-      const text = encodeURIComponent(`I scored ${score} on Type It or Die!`);
-      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
+    function startGame() {
+      playerName = nameInput.value.trim();
+      if (!playerName) {
+        alert("Please enter your name to start!");
+        nameInput.focus();
+        return;
+      }
+      nameInputContainer.classList.add("hide");
+      startBtn.disabled = true;
+      startBtn.innerText = "Playing...";
+      score = 0;
+      time = 10;
+      scoreEl.innerText = score;
+      timeEl.innerText = time;
+      gameInfo.style.display = "flex";
+      textInput.style.display = "inline-block";
+      textInput.disabled = false;
+      textInput.value = "";
+      textInput.focus();
+      displayWord();
+
+      timerInterval = setInterval(() => {
+        time--;
+        timeEl.innerText = time;
+        if (time <= 0) {
+          gameOver();
+        }
+      }, 1000);
     }
 
-    function shareFacebook() {
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
-    }
-
-    textInput.addEventListener("input", e => {
-      const typed = e.target.value.trim().toLowerCase();
-      if (typed === currentWord.toLowerCase()) {
+    textInput.addEventListener("input", () => {
+      if (textInput.value.trim() === currentWord) {
         successSound.play();
         updateScore();
-        textInput.value = "";
+
+        // Ge bonus-tid om svåra ord
         if (hardWords.includes(currentWord)) {
           updateTime(3);
         } else {
           updateTime(1);
         }
+
+        textInput.value = "";
         displayWord();
       }
     });
 
     startBtn.addEventListener("click", startGame);
 
-    window.onload = loadScores;
+    // Enter start med enter i namn-input
+    nameInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") startGame();
+    });
+
+    // Ladda highscore direkt vid start
+    loadScores();
+
+    // Dela-funktioner
+    function shareTwitter() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent(`I scored ${score} points playing Type It or Die! Try yourself!`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
+    }
+    function shareFacebook() {
+      const url = encodeURIComponent(window.location.href);
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+    }
   </script>
+
 </body>
 </html>
