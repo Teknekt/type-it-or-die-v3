@@ -4,10 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Type It or Die</title>
-
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.25.1/dist/supabase.min.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -15,110 +11,123 @@
       background: #0e0e0e;
       color: white;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       min-height: 100vh;
+      flex-direction: column;
       padding: 20px;
     }
     .game-container {
       text-align: center;
-      max-width: 600px;
+      max-width: 500px;
       width: 100%;
-      background: #1b1b1b;
-      padding: 20px;
+      background: #1e1e1e;
       border-radius: 10px;
-      box-sizing: border-box;
+      padding: 30px;
+      box-shadow: 0 0 20px #2e8b57aa;
     }
     h1 {
       font-size: 2.5rem;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.5rem;
     }
-    p {
-      margin-top: 0;
-      color: #bbb;
+    p.description {
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      color: #aaa;
     }
-    .word-display {
-      font-size: 2.2rem;
-      margin: 20px 0;
-      min-height: 2.5rem;
-      user-select: none;
-    }
-    input[type=text] {
+    #nameInput, #textInput {
       padding: 10px;
       font-size: 1.2rem;
       width: 100%;
-      box-sizing: border-box;
-      border-radius: 6px;
-      border: none;
       margin-bottom: 15px;
+      border-radius: 5px;
+      border: none;
       outline: none;
     }
-    .info {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
+    #startBtn {
+      padding: 12px 20px;
       font-size: 1.2rem;
-      font-weight: 600;
-    }
-    .leaderboard {
-      margin-top: 30px;
-      background: #222;
-      padding: 15px;
-      border-radius: 8px;
-      color: #eee;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    .leaderboard h3 {
-      margin-top: 0;
-    }
-    .leaderboard ul {
-      padding-left: 20px;
-      margin: 0;
-    }
-    button {
-      margin: 10px 0;
-      padding: 10px 20px;
-      font-size: 1.1rem;
       border: none;
       border-radius: 6px;
       background: #2e8b57;
       color: white;
       cursor: pointer;
-      user-select: none;
-      transition: background 0.2s ease;
+      margin-bottom: 15px;
+      width: 100%;
+      transition: background 0.3s ease;
     }
-    button:hover {
-      background: #246b44;
+    #startBtn:hover {
+      background: #3cb371;
     }
-    #nameInputContainer.hide {
-      display: none;
+    .word-display {
+      font-size: 2rem;
+      margin: 20px 0;
+      height: 50px;
+    }
+    .info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #ddd;
+    }
+    .leaderboard {
+      margin-top: 25px;
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      max-height: 250px;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .leaderboard h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #9acd32;
+    }
+    .leaderboard ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    .leaderboard li {
+      padding: 5px 0;
+      border-bottom: 1px solid #444;
+      font-size: 1.1rem;
+      color: #eee;
+    }
+    .share-buttons {
+      margin-top: 20px;
+    }
+    .share-buttons button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      background: #2e8b57;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .share-buttons button:hover {
+      background: #3cb371;
     }
   </style>
-
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651"
-     crossorigin="anonymous"></script>
-
 </head>
 <body>
 
   <div class="game-container">
     <h1>Type It or Die</h1>
-    <p>Type the words fast! Miss one and it's over. Bonus time for hard words.</p>
+    <p class="description">Type the words fast! Miss one and it's over. Bonus time for hard words.</p>
 
-    <div id="nameInputContainer">
-      <input type="text" id="nameInput" placeholder="Enter your name here" maxlength="20" />
-    </div>
-
+    <input id="nameInput" type="text" placeholder="Enter your name" maxlength="15" />
     <button id="startBtn">Start Game</button>
 
     <div class="word-display" id="word"></div>
+    <input id="textInput" type="text" placeholder="Type here..." autocomplete="off" disabled />
 
-    <input type="text" id="text" autocomplete="off" placeholder="Type here..." style="display:none;" />
-
-    <div class="info" style="display:none;" id="gameInfo">
+    <div class="info">
       <div>Time: <span id="time">10</span>s</div>
       <div>Score: <span id="score">0</span></div>
     </div>
@@ -128,200 +137,220 @@
       <ul id="scores"></ul>
     </div>
 
-    <div class="share-buttons" style="margin-top: 20px;">
+    <div class="share-buttons">
       <button onclick="shareTwitter()">Share on Twitter</button>
       <button onclick="shareFacebook()">Share on Facebook</button>
     </div>
-
-    <!-- Google AdSense Ins -->
-    <ins class="adsbygoogle"
-         style="display:block; text-align:center; margin-top: 30px"
-         data-ad-client="ca-pub-7723689755297651"
-         data-ad-slot="6475259413"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
   </div>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651" crossorigin="anonymous"></script>
+  <ins class="adsbygoogle"
+       style="display:block; text-align:center; margin-top: 30px"
+       data-ad-client="ca-pub-7723689755297651"
+       data-ad-slot="6475259413"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
 
   <!-- Sounds -->
   <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
   <audio id="failSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
 
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
   <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
+    window.onload = () => {
+      // Supabase config
+      const supabaseUrl = "https://wtzfzuragddwggmdemqf.supabase.co";
+      const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0";
 
-    // Word lists
-    // (Fler än 500 ord kan läggas i samma format)
-    const easyWords = [
-      "apple","sun","cat","ball","car","dog","home","fish","star","cake","milk","book","pen","tree","shoe",
-      "door","bird","rain","snow","moon","cloud","grass","hat","cup","key","bird","fish","leaf","girl","boy",
-      // ... (lägg till fler ord efter behov)
-    ];
-    const hardWords = [
-      "algorithm","hypothesis","cryptography","juxtaposition","miscellaneous",
-      "photosynthesis","metamorphosis","parliament","philosophy","architecture",
-      // ... (lägg till fler svåra ord)
-    ];
-    // Kombinera alla ord
-    const allWords = [...easyWords, ...hardWords];
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-    // DOM Elements
-    const wordEl = document.getElementById("word");
-    const textInput = document.getElementById("text");
-    const nameInput = document.getElementById("nameInput");
-    const nameInputContainer = document.getElementById("nameInputContainer");
-    const startBtn = document.getElementById("startBtn");
-    const scoreEl = document.getElementById("score");
-    const timeEl = document.getElementById("time");
-    const gameInfo = document.getElementById("gameInfo");
-    const scoresList = document.getElementById("scores");
-    const successSound = document.getElementById("successSound");
-    const failSound = document.getElementById("failSound");
+      // Word lists
+      const easyWords = ["apple","sun","cat","ball","car","dog","home","fish","star","cake","milk","book","pen","tree","shoe","red","blue","green","bird","rain","snow","wind","fire","cloud","leaf","rock","road","fish","bird","river","mountain","sky","grass","mouse","phone","chair","table","glass","cup","hat","door","clock","light","water","bread"];
+      const hardWords = ["algorithm","hypothesis","cryptography","juxtaposition","miscellaneous","quizzical","xylophone","zephyr","mnemonic","synecdoche"];
 
-    // Supabase init
-    const supabaseUrl = "https://wtzfzuragddwggmdemqf.supabase.co";
-    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0";
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+      let words = [...easyWords, ...hardWords];
 
-    // Game state
-    let score = 0;
-    let time = 10;
-    let currentWord = "";
-    let timerInterval;
-    let playerName = "";
+      // DOM elements
+      const nameInput = document.getElementById("nameInput");
+      const startBtn = document.getElementById("startBtn");
+      const wordEl = document.getElementById("word");
+      const textInput = document.getElementById("textInput");
+      const scoreEl = document.getElementById("score");
+      const timeEl = document.getElementById("time");
+      const scoresList = document.getElementById("scores");
+      const successSound = document.getElementById("successSound");
+      const failSound = document.getElementById("failSound");
 
-    function getRandomWord() {
-      const idx = Math.floor(Math.random() * allWords.length);
-      return allWords[idx];
-    }
+      let score = 0;
+      let time = 10;
+      let currentWord = "";
+      let timerInterval;
+      let playerName = "";
 
-    function displayWord() {
-      currentWord = getRandomWord();
-      wordEl.innerText = currentWord;
-    }
-
-    function updateScore() {
-      score++;
-      scoreEl.innerText = score;
-    }
-
-    function updateTime(bonus = 0) {
-      time += bonus;
-      timeEl.innerText = time;
-    }
-
-    function gameOver() {
-      failSound.play();
-      clearInterval(timerInterval);
-      textInput.disabled = true;
-      alert(`Game Over! Your score: ${score}`);
-      saveScore(score);
-      startBtn.disabled = false;
-      startBtn.innerText = "Play Again";
-      nameInputContainer.classList.remove("hide");
-      textInput.style.display = "none";
-      gameInfo.style.display = "none";
-      wordEl.innerText = "";
-    }
-
-    async function saveScore(score) {
-      if (!playerName) return; // if no name, skip saving
-      const { data, error } = await supabase
-        .from("highscores")
-        .insert([{ name: playerName, score }]);
-      if (error) {
-        console.error("Failed to save score:", error);
-      } else {
-        loadScores();
+      // Helper functions
+      function getRandomWord() {
+        const idx = Math.floor(Math.random() * words.length);
+        return words[idx];
       }
-    }
 
-    async function loadScores() {
-      const { data, error } = await supabase
-        .from("highscores")
-        .select("*")
-        .order("score", { ascending: false })
-        .limit(10);
-      if (error) {
-        console.error("Failed to load scores:", error);
-        return;
+      function displayWord() {
+        currentWord = getRandomWord();
+        wordEl.innerText = currentWord;
       }
-      scoresList.innerHTML = "";
-      data.forEach(({ name, score }) => {
-        const li = document.createElement("li");
-        li.innerText = `${name}: ${score}`;
-        scoresList.appendChild(li);
-      });
-    }
 
-    function startGame() {
-      playerName = nameInput.value.trim();
-      if (!playerName) {
-        alert("Please enter your name to start!");
-        nameInput.focus();
-        return;
+      function updateScore() {
+        score++;
+        scoreEl.innerText = score;
       }
-      nameInputContainer.classList.add("hide");
-      startBtn.disabled = true;
-      startBtn.innerText = "Playing...";
-      score = 0;
-      time = 10;
-      scoreEl.innerText = score;
-      timeEl.innerText = time;
-      gameInfo.style.display = "flex";
-      textInput.style.display = "inline-block";
-      textInput.disabled = false;
-      textInput.value = "";
-      textInput.focus();
-      displayWord();
 
-      timerInterval = setInterval(() => {
-        time--;
+      function updateTime() {
         timeEl.innerText = time;
-        if (time <= 0) {
-          gameOver();
-        }
-      }, 1000);
-    }
-
-    textInput.addEventListener("input", () => {
-      if (textInput.value.trim() === currentWord) {
-        successSound.play();
-        updateScore();
-
-        // Ge bonus-tid om svåra ord
-        if (hardWords.includes(currentWord)) {
-          updateTime(3);
-        } else {
-          updateTime(1);
-        }
-
-        textInput.value = "";
-        displayWord();
       }
-    });
 
-    startBtn.addEventListener("click", startGame);
+      function gameOver() {
+        clearInterval(timerInterval);
+        failSound.play();
+        alert(`Game Over! ${playerName}, your final score is ${score}.`);
 
-    // Enter start med enter i namn-input
-    nameInput.addEventListener("keydown", e => {
-      if (e.key === "Enter") startGame();
-    });
+        // Save score to Supabase
+        saveScore(playerName, score);
 
-    // Ladda highscore direkt vid start
-    loadScores();
+        // Reset UI
+        startBtn.disabled = false;
+        nameInput.style.display = "block";
+        textInput.disabled = true;
+        wordEl.innerText = "";
+        score = 0;
+        time = 10;
+        scoreEl.innerText = score;
+        timeEl.innerText = time;
+      }
 
-    // Dela-funktioner
-    function shareTwitter() {
-      const url = encodeURIComponent(window.location.href);
-      const text = encodeURIComponent(`I scored ${score} points playing Type It or Die! Try yourself!`);
-      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
-    }
-    function shareFacebook() {
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+      async function saveScore(name, score) {
+        try {
+          const { data, error } = await supabase
+            .from('highscores')
+            .insert([{ username: name, score: score }]);
+
+          if (error) {
+            console.error('Error saving score:', error.message);
+          } else {
+            loadScores(); // Reload leaderboard
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function loadScores() {
+        try {
+          let { data, error } = await supabase
+            .from('highscores')
+            .select('*')
+            .order('score', { ascending: false })
+            .limit(10);
+
+          if (error) {
+            console.error('Error loading scores:', error.message);
+            scoresList.innerHTML = "<li>Failed to load scores</li>";
+            return;
+          }
+
+          scoresList.innerHTML = "";
+          if (data.length === 0) {
+            scoresList.innerHTML = "<li>No highscores yet</li>";
+            return;
+          }
+          data.forEach(({ username, score }) => {
+            const li = document.createElement("li");
+            li.textContent = `${username} — ${score}`;
+            scoresList.appendChild(li);
+          });
+        } catch (err) {
+          console.error(err);
+          scoresList.innerHTML = "<li>Error loading scores</li>";
+        }
+      }
+
+      function startGame() {
+        playerName = nameInput.value.trim();
+        if (playerName === "") {
+          alert("Please enter your name to start.");
+          return;
+        }
+
+        // Hide name input and disable start button
+        nameInput.style.display = "none";
+        startBtn.disabled = true;
+
+        // Enable typing input and focus
+        textInput.disabled = false;
+        textInput.value = "";
+        textInput.focus();
+
+        score = 0;
+        time = 10;
+        updateScore();
+        updateTime();
+
+        displayWord();
+
+        timerInterval = setInterval(() => {
+          time--;
+          updateTime();
+
+          if (time <= 0) {
+            gameOver();
+          }
+        }, 1000);
+      }
+
+      // Listen for start button
+      startBtn.addEventListener("click", startGame);
+
+      // Listen for enter key on textInput
+      textInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+          if (textInput.value.trim().toLowerCase() === currentWord.toLowerCase()) {
+            successSound.play();
+            updateScore();
+            // Add bonus time for hard words
+            if (hardWords.includes(currentWord)) {
+              time += 3;
+            } else {
+              time += 1;
+            }
+            if (time > 60) time = 60; // max 60s
+            updateTime();
+            textInput.value = "";
+            displayWord();
+          } else {
+            gameOver();
+          }
+        }
+      });
+
+      // Load leaderboard on page load
+      loadScores();
+
+      // Sharing functions
+      window.shareTwitter = function() {
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent(`I scored ${score} points playing Type It or Die! Try it yourself:`);
+        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
+      }
+
+      window.shareFacebook = function() {
+        const url = encodeURIComponent(window.location.href);
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+      }
     }
   </script>
-
 </body>
 </html>
-
