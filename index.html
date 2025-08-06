@@ -4,74 +4,142 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Type It Or Die</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
+      margin: 0;
+      padding: 0;
       background-color: #111;
       color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
+
+    .container {
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .instructions {
+      background: #222;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
     #word {
       font-size: 32px;
       margin: 20px 0;
     }
+
     #input {
       padding: 10px;
       font-size: 18px;
+      width: 80%;
+      border-radius: 8px;
+      border: none;
+      outline: none;
     }
+
     #timer, #score {
       margin: 10px 0;
+      font-size: 1.2rem;
     }
+
     button {
-      padding: 10px 20px;
+      padding: 12px 24px;
       font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #00bcd4;
+      color: white;
       margin-top: 20px;
       cursor: pointer;
+      transition: background 0.3s;
     }
+
+    button:hover {
+      background-color: #0197a1;
+    }
+
     #leaderboard-container {
       margin-top: 40px;
       background: #222;
       padding: 20px;
-      border-radius: 10px;
-      display: inline-block;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
+
+    #leaderboard-container h2 {
+      margin-bottom: 10px;
+    }
+
+    #leaderboard {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #leaderboard li {
+      margin: 5px 0;
+      font-size: 1.1rem;
+    }
+
     #share-buttons button {
-      margin: 10px;
+      margin: 10px 5px 0 5px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Type It Or Die</h1>
-  <div id="timer">Tid kvar: <span id="time">10</span> sek</div>
-  <div id="score">Poäng: <span id="points">0</span></div>
-  <div id="word">Tryck på Start!</div>
-  <input type="text" id="input" disabled />
-  <br />
-  <button onclick="startGame()">Starta spelet</button>
-
-  <div id="leaderboard-container">
-    <h2>Topplista</h2>
-    <ol id="leaderboard"></ol>
-
-    <div id="share-buttons">
-      <button onclick="shareTwitter()">Dela på Twitter</button>
-      <button onclick="shareFacebook()">Dela på Facebook</button>
+  <div class="container">
+    <h1>Type It Or Die</h1>
+    <div class="instructions">
+      Skriv ordet som visas så snabbt du kan. Varje rätt ord ger dig mer tid!  
+      Se hur många poäng du hinner få innan klockan tar slut.
     </div>
-  </div>
 
-  <!-- AdSense-kod -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  <ins class="adsbygoogle"
-       style="display:block; text-align:center;"
-       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-       data-ad-slot="YYYYYYYYYY"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>
-       (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
+    <div id="timer">⏳ Tid kvar: <span id="time">10</span> sek</div>
+    <div id="score">⭐ Poäng: <span id="points">0</span></div>
+    <div id="word">Tryck på Start!</div>
+    <input type="text" id="input" disabled />
+    <br />
+    <button onclick="startGame()">Starta spelet</button>
+
+    <div id="leaderboard-container">
+      <h2>🏆 Topplista</h2>
+      <ol id="leaderboard"></ol>
+
+      <div id="share-buttons">
+        <button onclick="shareTwitter()">Dela på Twitter</button>
+        <button onclick="shareFacebook()">Dela på Facebook</button>
+      </div>
+    </div>
+
+    <!-- AdSense-kod -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <ins class="adsbygoogle"
+         style="display:block; text-align:center;"
+         data-ad-client="ca-pub-7723689755297651"
+         data-ad-slot="6475259413"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+
+  </div>
 
   <script>
     const words = ["banan", "tiger", "sverige", "snabb", "glass", "robot", "havet", "katt", "hund", "äpple"];
@@ -166,7 +234,6 @@
       renderLeaderboard();
     };
   </script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651"
-     crossorigin="anonymous"></script>
+
 </body>
 </html>
