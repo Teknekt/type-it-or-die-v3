@@ -68,8 +68,13 @@
   <div class="game-container">
     <h1>Type It or Die</h1>
     <p>Type the words fast! Miss one and it's over. Bonus time for hard words.</p>
+    <div style="margin-bottom: 10px;">
+      <label for="player-name">Your Name:</label>
+      <input type="text" id="player-name" placeholder="Enter your name" maxlength="20" />
+    </div>
+    <button id="start-button">Start Game</button>
     <div class="word-display" id="word"></div>
-    <input type="text" id="text" autocomplete="off" placeholder="Type here..." />
+    <input type="text" id="text" autocomplete="off" placeholder="Type here..." disabled />
     <div class="info">
       <div>Time: <span id="time">10</span>s</div>
       <div>Score: <span id="score">0</span></div>
@@ -148,8 +153,14 @@
     }
 
     function startGame() {
-      displayWord();
+      score = 0;
+      time = 10;
+      scoreEl.innerText = score;
+      timeEl.innerText = time;
+      text.disabled = false;
+      text.value = "";
       text.focus();
+      displayWord();
       timerInterval = setInterval(() => {
         time--;
         timeEl.innerText = time;
@@ -176,8 +187,11 @@
     });
 
     async function saveScore(newScore) {
+      const playerNameInput = document.getElementById("player-name");
+      const name = playerNameInput?.value.trim() || "Anonymous";
+
       const { error } = await supabase.from("highscores").insert([
-        { name: "Anonymous", score: newScore }
+        { name: name, score: newScore }
       ]);
       if (!error) loadScores();
     }
@@ -204,7 +218,11 @@
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
     }
 
-    startGame();
+    document.getElementById("start-button").addEventListener("click", () => {
+      document.getElementById("start-button").style.display = "none";
+      startGame();
+    });
+
     loadScores();
   </script>
 </body>
