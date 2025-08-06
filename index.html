@@ -1,239 +1,241 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Type It Or Die</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Type it or Die</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       padding: 0;
+      font-family: 'Roboto', sans-serif;
       background-color: #111;
       color: #fff;
-      font-family: 'Roboto', sans-serif;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
     }
-
-    .container {
+    .game-container {
       text-align: center;
-      max-width: 600px;
+      background: #1e1e1e;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
       width: 90%;
+      max-width: 500px;
     }
-
     h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
+      margin-top: 0;
+      color: #00ffff;
     }
-
     .instructions {
-      background: #222;
-      padding: 15px;
-      border-radius: 12px;
       font-size: 1rem;
+      color: #aaa;
       margin-bottom: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-
-    #word {
-      font-size: 32px;
+    .word {
+      font-size: 2rem;
       margin: 20px 0;
     }
-
-    #input {
+    input {
       padding: 10px;
-      font-size: 18px;
-      width: 80%;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-    }
-
-    #timer, #score {
-      margin: 10px 0;
       font-size: 1.2rem;
-    }
-
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
+      width: 100%;
       border: none;
       border-radius: 8px;
-      background-color: #00bcd4;
-      color: white;
+    }
+    .stats {
       margin-top: 20px;
-      cursor: pointer;
-      transition: background 0.3s;
+      display: flex;
+      justify-content: space-between;
     }
-
-    button:hover {
-      background-color: #0197a1;
-    }
-
-    #leaderboard-container {
-      margin-top: 40px;
-      background: #222;
+    .leaderboard {
+      background-color: #222;
+      margin-top: 30px;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-
-    #leaderboard-container h2 {
-      margin-bottom: 10px;
+    .leaderboard h3 {
+      margin-top: 0;
+      color: #ffd700;
     }
-
-    #leaderboard {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .start-btn {
+      margin-top: 20px;
+      background: #00bcd4;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-
-    #leaderboard li {
-      margin: 5px 0;
-      font-size: 1.1rem;
+    .start-btn:hover {
+      background: #0097a7;
     }
-
-    #share-buttons button {
-      margin: 10px 5px 0 5px;
+    .share {
+      margin-top: 20px;
+    }
+    .share button {
+      background-color: #4267B2;
+      border: none;
+      color: white;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 <body>
+  <div class="game-container">
+    <h1>Type it or Die</h1>
+    <p class="instructions">Type the word shown below as fast as you can. Each correct word gives you 1 extra second. Miss, and you lose!</p>
+    <div class="word" id="word">Click Start</div>
+    <input type="text" id="input" placeholder="Start typing..." disabled />
+    <div class="stats">
+      <div>⏱ Time: <span id="time">0</span>s</div>
+      <div>💯 Score: <span id="score">0</span></div>
+    </div>
+    <button class="start-btn" id="start-btn">Start Game</button>
 
-  <div class="container">
-    <h1>Type It Or Die</h1>
-    <div class="instructions">
-      Skriv ordet som visas så snabbt du kan. Varje rätt ord ger dig mer tid!  
-      Se hur många poäng du hinner få innan klockan tar slut.
+    <!-- AdSense Slot -->
+    <div style="margin-top: 20px;">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+           data-ad-slot="yyyyyyyyyy"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
     </div>
 
-    <div id="timer">⏳ Tid kvar: <span id="time">10</span> sek</div>
-    <div id="score">⭐ Poäng: <span id="points">0</span></div>
-    <div id="word">Tryck på Start!</div>
-    <input type="text" id="input" disabled />
-    <br />
-    <button onclick="startGame()">Starta spelet</button>
-
-    <div id="leaderboard-container">
-      <h2>🏆 Topplista</h2>
+    <div class="leaderboard">
+      <h3>🏆 High Scores</h3>
       <ol id="leaderboard"></ol>
-
-      <div id="share-buttons">
-        <button onclick="shareTwitter()">Dela på Twitter</button>
-        <button onclick="shareFacebook()">Dela på Facebook</button>
-      </div>
     </div>
 
-    <!-- AdSense-kod -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <ins class="adsbygoogle"
-         style="display:block; text-align:center;"
-         data-ad-client="ca-pub-7723689755297651"
-         data-ad-slot="6475259413"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-
+    <div class="share">
+      <button onclick="shareOnFacebook()">Share on Facebook</button>
+      <button onclick="shareOnTwitter()">Share on Twitter</button>
+    </div>
   </div>
 
-  <script>
-    const words = ["banan", "tiger", "sverige", "snabb", "glass", "robot", "havet", "katt", "hund", "äpple"];
-    let time = 10;
-    let score = 0;
-    let timer;
-    let currentWord = "";
+  <audio id="correctSound" src="https://www.soundjay.com/button/sounds/button-09.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="https://www.soundjay.com/button/sounds/button-10.mp3" preload="auto"></audio>
 
-    function getRandomWord() {
+  <script>
+    const words = [
+      // Standard words
+      "apple", "banana", "keyboard", "monitor", "future", "challenge",
+      "internet", "planet", "rocket", "science", "program", "focus",
+      "electric", "random", "space", "time", "speed", "victory", "level",
+      "danger", "fast", "typing", "score", "bonus", "type", "react",
+      "javascript", "html", "css", "input",
+      // Bonus words
+      "synchronization", "transcendental", "cryptocurrency", "neuroscience", "encyclopedia",
+      "microprocessor", "institutionalization", "photosynthesis", "extraterrestrial", "hypertextual"
+    ];
+
+    const wordEl = document.getElementById("word");
+    const input = document.getElementById("input");
+    const timeEl = document.getElementById("time");
+    const scoreEl = document.getElementById("score");
+    const leaderboardEl = document.getElementById("leaderboard");
+    const startBtn = document.getElementById("start-btn");
+
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
+
+    let score = 0;
+    let time = 0;
+    let currentWord = "";
+    let interval;
+
+    function randomWord() {
       return words[Math.floor(Math.random() * words.length)];
+    }
+
+    function setNewWord() {
+      currentWord = randomWord();
+      wordEl.textContent = currentWord;
     }
 
     function startGame() {
       score = 0;
-      time = 10;
-      document.getElementById("input").disabled = false;
-      document.getElementById("input").value = "";
-      document.getElementById("input").focus();
-      document.getElementById("points").textContent = score;
-      currentWord = getRandomWord();
-      document.getElementById("word").textContent = currentWord;
+      time = 7;
+      input.disabled = false;
+      input.value = "";
+      input.focus();
+      setNewWord();
+      scoreEl.textContent = score;
+      timeEl.textContent = time;
+      startBtn.disabled = true;
 
-      timer = setInterval(() => {
+      interval = setInterval(() => {
         time--;
-        document.getElementById("time").textContent = time;
+        timeEl.textContent = time;
         if (time <= 0) {
-          clearInterval(timer);
-          document.getElementById("input").disabled = true;
-          onGameOver(score);
-          document.getElementById("word").textContent = "Spelet är över!";
+          endGame();
         }
       }, 1000);
     }
 
-    document.getElementById("input").addEventListener("input", function() {
-      if (this.value.toLowerCase() === currentWord.toLowerCase()) {
+    function endGame() {
+      clearInterval(interval);
+      input.disabled = true;
+      wordEl.textContent = "Game Over!";
+      startBtn.disabled = false;
+      updateLeaderboard();
+      wrongSound.play();
+    }
+
+    input.addEventListener("input", () => {
+      if (input.value.trim().toLowerCase() === currentWord.toLowerCase()) {
         score++;
-        document.getElementById("points").textContent = score;
-        this.value = "";
-        currentWord = getRandomWord();
-        document.getElementById("word").textContent = currentWord;
-        time += 2;
+        scoreEl.textContent = score;
+        time += 1;
+        timeEl.textContent = time;
+        input.value = "";
+        setNewWord();
+        correctSound.play();
       }
     });
 
-    function getLeaderboard() {
-      let scores = JSON.parse(localStorage.getItem('leaderboard')) || [];
-      return scores;
-    }
-
-    function saveScore(score) {
-      let scores = getLeaderboard();
+    function updateLeaderboard() {
+      let scores = JSON.parse(localStorage.getItem("highScores")) || [];
       scores.push(score);
       scores.sort((a, b) => b - a);
       scores = scores.slice(0, 5);
-      localStorage.setItem('leaderboard', JSON.stringify(scores));
+      localStorage.setItem("highScores", JSON.stringify(scores));
+
+      leaderboardEl.innerHTML = scores
+        .map((s, i) => `<li>#${i + 1}: ${s}</li>`) 
+        .join("");
     }
 
-    function renderLeaderboard() {
-      const leaderboardEl = document.getElementById('leaderboard');
-      let scores = getLeaderboard();
-      leaderboardEl.innerHTML = '';
-      if (scores.length === 0) {
-        leaderboardEl.innerHTML = '<li>Ingen data än</li>';
-      } else {
-        scores.forEach(score => {
-          leaderboardEl.innerHTML += `<li>${score} poäng</li>`;
-        });
-      }
-    }
-
-    function onGameOver(finalScore) {
-      saveScore(finalScore);
-      renderLeaderboard();
-      currentScore = finalScore;
-    }
-
-    let currentScore = 0;
-
-    function shareTwitter() {
-      const text = encodeURIComponent(`Jag fick ${currentScore} poäng i "Type It Or Die"! Testa själv: https://type-it-or-die.vercel.app`);
-      const url = `https://twitter.com/intent/tweet?text=${text}`;
-      window.open(url, '_blank');
-    }
-
-    function shareFacebook() {
-      const url = encodeURIComponent('https://type-it-or-die.vercel.app');
+    function shareOnFacebook() {
+      const url = encodeURIComponent(window.location.href);
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
     }
 
-    window.onload = () => {
-      renderLeaderboard();
-    };
-  </script>
+    function shareOnTwitter() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent("Try to beat my score on 'Type it or Die'!");
+      window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+    }
 
+    window.addEventListener("load", updateLeaderboard);
+    startBtn.addEventListener("click", startGame);
+  </script>
 </body>
 </html>
