@@ -180,7 +180,7 @@
     // Supabase init
     const supabaseUrl = "https://wtzfzuragddwggmdemqf.supabase.co";
     const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0";
-    const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
     // Game state
     let score = 0;
@@ -324,3 +324,4 @@
 
 </body>
 </html>
+
