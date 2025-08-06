@@ -31,10 +31,11 @@
       font-size: 2rem;
       margin: 20px 0;
     }
-    input {
+    input[type="text"], #nameInput {
       padding: 10px;
       font-size: 1.2rem;
       width: 100%;
+      margin-top: 10px;
     }
     .info {
       display: flex;
@@ -62,17 +63,22 @@
       color: white;
       cursor: pointer;
     }
+    #nameContainer {
+      margin-top: 15px;
+    }
+    #startBtn {
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
   <div class="game-container">
     <h1>Type It or Die</h1>
     <p>Type the words fast! Miss one and it's over. Bonus time for hard words.</p>
-    <div style="margin-bottom: 10px;">
-      <label for="player-name">Your Name:</label>
-      <input type="text" id="player-name" placeholder="Enter your name" maxlength="20" />
+    <div id="nameContainer">
+      <input type="text" id="nameInput" placeholder="Enter your name..." />
+      <button id="startBtn">Start Game</button>
     </div>
-    <button id="start-button">Start Game</button>
     <div class="word-display" id="word"></div>
     <input type="text" id="text" autocomplete="off" placeholder="Type here..." disabled />
     <div class="info">
@@ -115,14 +121,18 @@
     const scoresList = document.getElementById("scores");
     const successSound = document.getElementById("successSound");
     const failSound = document.getElementById("failSound");
+    const nameInput = document.getElementById("nameInput");
+    const startBtn = document.getElementById("startBtn");
+    const nameContainer = document.getElementById("nameContainer");
 
     let score = 0;
     let time = 10;
     let currentWord = "";
     let timerInterval;
+    let playerName = "Anonymous";
 
     const supabaseUrl = "https://wtzfzuragddwggmdemqf.supabase.co";
-    const supabaseKey = "process.env.SUPABASE_KEY";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0";
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     function getRandomWord() {
@@ -153,14 +163,15 @@
     }
 
     function startGame() {
+      playerName = nameInput.value.trim() || "Anonymous";
+      nameContainer.style.display = "none";
       score = 0;
       time = 10;
       scoreEl.innerText = score;
       timeEl.innerText = time;
       text.disabled = false;
-      text.value = "";
-      text.focus();
       displayWord();
+      text.focus();
       timerInterval = setInterval(() => {
         time--;
         timeEl.innerText = time;
@@ -187,11 +198,8 @@
     });
 
     async function saveScore(newScore) {
-      const playerNameInput = document.getElementById("player-name");
-      const name = playerNameInput?.value.trim() || "Anonymous";
-
       const { error } = await supabase.from("highscores").insert([
-        { name: name, score: newScore }
+        { name: playerName, score: newScore }
       ]);
       if (!error) loadScores();
     }
@@ -218,11 +226,7 @@
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
     }
 
-    document.getElementById("start-button").addEventListener("click", () => {
-      document.getElementById("start-button").style.display = "none";
-      startGame();
-    });
-
+    startBtn.addEventListener("click", startGame);
     loadScores();
   </script>
 </body>
