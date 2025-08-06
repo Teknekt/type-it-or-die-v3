@@ -1,108 +1,84 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Type It or Die</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Type It Or Die</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
+      background-color: #111;
       color: #fff;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 2rem;
+      padding: 20px;
     }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+    #word {
+      font-size: 32px;
+      margin: 20px 0;
     }
-
-    #game, #gameOverScreen {
-      display: none;
+    #input {
+      padding: 10px;
+      font-size: 18px;
     }
-
-    .word {
-      font-size: 2rem;
-      margin: 1rem 0;
+    #timer, #score {
+      margin: 10px 0;
     }
-
-    input {
-      padding: 0.5rem;
-      font-size: 1.2rem;
-      width: 80%;
-      max-width: 300px;
-    }
-
     button {
-      padding: 0.7rem 1.5rem;
-      font-size: 1.1rem;
-      background: #00bcd4;
-      border: none;
-      color: white;
-      margin-top: 1rem;
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
       cursor: pointer;
     }
-
-    button:hover {
-      background: #008c9e;
+    #leaderboard-container {
+      margin-top: 40px;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
     }
-
-    .score {
-      margin-top: 1rem;
-      font-size: 1.2rem;
-    }
-
-    .share-btn {
-      background: #4caf50;
-      margin-top: 1rem;
+    #share-buttons button {
+      margin: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Type It or Die</h1>
 
-  <div id="startScreen">
-    <p>Skriv orden innan tiden tar slut. Klarar du det?</p>
-    <button onclick="startGame()">Starta spelet</button>
+  <h1>Type It Or Die</h1>
+  <div id="timer">Tid kvar: <span id="time">10</span> sek</div>
+  <div id="score">Poäng: <span id="points">0</span></div>
+  <div id="word">Tryck på Start!</div>
+  <input type="text" id="input" disabled />
+  <br />
+  <button onclick="startGame()">Starta spelet</button>
+
+  <div id="leaderboard-container">
+    <h2>Topplista</h2>
+    <ol id="leaderboard"></ol>
+
+    <div id="share-buttons">
+      <button onclick="shareTwitter()">Dela på Twitter</button>
+      <button onclick="shareFacebook()">Dela på Facebook</button>
+    </div>
   </div>
 
-  <div id="game">
-    <div class="word" id="currentWord">ord</div>
-    <input type="text" id="input" placeholder="Skriv här..." autocomplete="off" autofocus />
-    <div class="score" id="score">Poäng: 0 | Missar: 0</div>
-    <div id="timer">Tid kvar: <span id="timeLeft">0.0</span>s</div>
-  </div>
-
-  <div id="gameOverScreen">
-    <h2>Game Over</h2>
-    <p>Du klarade <span id="finalScore"></span> ord!</p>
-    <button onclick="startGame()">Spela igen</button>
-    <button class="share-btn" onclick="shareScore()">Dela resultat</button>
-  </div>
+  <!-- AdSense-kod -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <ins class="adsbygoogle"
+       style="display:block; text-align:center;"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="YYYYYYYYYY"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>
+       (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
 
   <script>
-    const words = [
-      "hund", "katt", "boll", "glass", "sommar", "blomma", "skor", "snabb", "långsam", "skola", 
-      "cykel", "robot", "sten", "sjö", "hatt", "dator", "äpple", "bok", "sol", "regn",
-      "knapp", "vägg", "spel", "röd", "blå", "grön", "vit", "gul", "svart", "snö", 
-      "banan", "resa", "ljus", "mörker", "lampa", "penna", "skärm", "hiss", "kaffe"
-    ];
-
-    let currentWord = "";
+    const words = ["banan", "tiger", "sverige", "snabb", "glass", "robot", "havet", "katt", "hund", "äpple"];
+    let time = 10;
     let score = 0;
-    let misses = 0;
-    let timeLimit = 2.0;
-    let timerInterval;
-
-    const wordDisplay = document.getElementById("currentWord");
-    const input = document.getElementById("input");
-    const scoreDisplay = document.getElementById("score");
-    const timerDisplay = document.getElementById("timeLeft");
-    const gameScreen = document.getElementById("game");
-    const startScreen = document.getElementById("startScreen");
-    const gameOverScreen = document.getElementById("gameOverScreen");
-    const finalScore = document.getElementById("finalScore");
+    let timer;
+    let currentWord = "";
 
     function getRandomWord() {
       return words[Math.floor(Math.random() * words.length)];
@@ -110,77 +86,87 @@
 
     function startGame() {
       score = 0;
-      misses = 0;
-      timeLimit = 2.0;
-
-      startScreen.style.display = "none";
-      gameScreen.style.display = "block";
-      gameOverScreen.style.display = "none";
-
-      nextWord();
-    }
-
-    function nextWord() {
+      time = 10;
+      document.getElementById("input").disabled = false;
+      document.getElementById("input").value = "";
+      document.getElementById("input").focus();
+      document.getElementById("points").textContent = score;
       currentWord = getRandomWord();
-      wordDisplay.textContent = currentWord;
-      input.value = "";
-      input.focus();
+      document.getElementById("word").textContent = currentWord;
 
-      let timeLeft = timeLimit;
-      timerDisplay.textContent = timeLeft.toFixed(1);
-
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        timeLeft -= 0.1;
-        timerDisplay.textContent = timeLeft.toFixed(1);
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          registerMiss();
+      timer = setInterval(() => {
+        time--;
+        document.getElementById("time").textContent = time;
+        if (time <= 0) {
+          clearInterval(timer);
+          document.getElementById("input").disabled = true;
+          onGameOver(score);
+          document.getElementById("word").textContent = "Spelet är över!";
         }
-      }, 100);
+      }, 1000);
     }
 
-    input.addEventListener("input", () => {
-      if (input.value.trim() === currentWord) {
-        clearInterval(timerInterval);
+    document.getElementById("input").addEventListener("input", function() {
+      if (this.value.toLowerCase() === currentWord.toLowerCase()) {
         score++;
-        timeLimit = Math.max(0.8, timeLimit - 0.05);
-        updateScore();
-        nextWord();
+        document.getElementById("points").textContent = score;
+        this.value = "";
+        currentWord = getRandomWord();
+        document.getElementById("word").textContent = currentWord;
+        time += 2;
       }
     });
 
-    function registerMiss() {
-      misses++;
-      updateScore();
-      if (misses >= 3) {
-        endGame();
+    function getLeaderboard() {
+      let scores = JSON.parse(localStorage.getItem('leaderboard')) || [];
+      return scores;
+    }
+
+    function saveScore(score) {
+      let scores = getLeaderboard();
+      scores.push(score);
+      scores.sort((a, b) => b - a);
+      scores = scores.slice(0, 5);
+      localStorage.setItem('leaderboard', JSON.stringify(scores));
+    }
+
+    function renderLeaderboard() {
+      const leaderboardEl = document.getElementById('leaderboard');
+      let scores = getLeaderboard();
+      leaderboardEl.innerHTML = '';
+      if (scores.length === 0) {
+        leaderboardEl.innerHTML = '<li>Ingen data än</li>';
       } else {
-        nextWord();
+        scores.forEach(score => {
+          leaderboardEl.innerHTML += `<li>${score} poäng</li>`;
+        });
       }
     }
 
-    function updateScore() {
-      scoreDisplay.textContent = `Poäng: ${score} | Missar: ${misses}`;
+    function onGameOver(finalScore) {
+      saveScore(finalScore);
+      renderLeaderboard();
+      currentScore = finalScore;
     }
 
-    function endGame() {
-      gameScreen.style.display = "none";
-      gameOverScreen.style.display = "block";
-      finalScore.textContent = score;
+    let currentScore = 0;
+
+    function shareTwitter() {
+      const text = encodeURIComponent(`Jag fick ${currentScore} poäng i "Type It Or Die"! Testa själv: https://type-it-or-die.vercel.app`);
+      const url = `https://twitter.com/intent/tweet?text=${text}`;
+      window.open(url, '_blank');
     }
 
-    function shareScore() {
-      const text = `Jag klarade ${score} ord i "Type It or Die"! Testa själv: [DIN-LÄNK-HÄR]`;
-      if (navigator.share) {
-        navigator.share({ title: "Type It or Die", text });
-      } else {
-        prompt("Kopiera och dela detta:", text);
-      }
+    function shareFacebook() {
+      const url = encodeURIComponent('https://type-it-or-die.vercel.app');
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
     }
+
+    window.onload = () => {
+      renderLeaderboard();
+    };
   </script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651"
      crossorigin="anonymous"></script>
 </body>
 </html>
-
