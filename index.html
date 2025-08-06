@@ -5,26 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Type It or Die</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #0e0e0e;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      flex-direction: column;
-      padding: 20px;
-    }
+  body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    background-size: cover;
+    background-attachment: fixed;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 0;
+  }
     .game-container {
-      text-align: center;
-      max-width: 500px;
-      width: 100%;
-      background: #1e1e1e;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 0 20px #2e8b57aa;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  max-width: 600px;
+  margin: 50px auto;
+  text-align: center;
+}
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+button {
+  background: linear-gradient(45deg, #6a11cb, #2575fc);
+  color: white;
+  font-weight: 600;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: background 0.3s, transform 0.3s;
+}
+
+button:hover {
+  background: linear-gradient(45deg, #2575fc, #6a11cb);
+  transform: scale(1.05);
+}
+.word-display {
+  font-size: 24px;
+  font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.game-over {
+  animation: pulse 1s infinite;
+  color: red;
+  font-size: 30px;
+  font-weight: bold;
+}
+
     }
     h1 {
       font-size: 2.5rem;
@@ -354,3 +397,4 @@
   </script>
 </body>
 </html>
+
