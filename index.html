@@ -3,42 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Type it or Die</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <title>Type It or Die</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #111;
-      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0e0e0e;
+      color: white;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      height: 100vh;
+      justify-content: center;
+      min-height: 100vh;
     }
     .game-container {
       text-align: center;
-      background: #1e1e1e;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-      width: 90%;
       max-width: 500px;
+      width: 90%;
     }
     h1 {
-      margin-top: 0;
-      color: #00ffff;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
     }
-    .instructions {
-      font-size: 1rem;
-      color: #aaa;
-      margin-bottom: 20px;
-    }
-    .word {
+    .word-display {
       font-size: 2rem;
       margin: 20px 0;
     }
@@ -46,197 +35,177 @@
       padding: 10px;
       font-size: 1.2rem;
       width: 100%;
-      border: none;
-      border-radius: 8px;
     }
-    .stats {
-      margin-top: 20px;
+    .info {
       display: flex;
       justify-content: space-between;
+      margin-top: 15px;
+      font-size: 1.1rem;
     }
     .leaderboard {
-      background-color: #222;
       margin-top: 30px;
+      background: #1e1e1e;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 10px;
+      width: 100%;
     }
-    .leaderboard h3 {
-      margin-top: 0;
-      color: #ffd700;
-    }
-    .start-btn {
-      margin-top: 20px;
-      background: #00bcd4;
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .start-btn:hover {
-      background: #0097a7;
-    }
-    .share {
+    .share-buttons {
       margin-top: 20px;
     }
-    .share button {
-      background-color: #4267B2;
-      border: none;
-      color: white;
-      padding: 10px;
+    button {
       margin: 5px;
-      border-radius: 6px;
+      padding: 8px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      background: #2e8b57;
+      color: white;
       cursor: pointer;
     }
   </style>
-  <!-- AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 <body>
   <div class="game-container">
-    <h1>Type it or Die</h1>
-    <p class="instructions">Type the word shown below as fast as you can. Each correct word gives you 1 extra second. Miss, and you lose!</p>
-    <div class="word" id="word">Click Start</div>
-    <input type="text" id="input" placeholder="Start typing..." disabled />
-    <div class="stats">
-      <div>⏱ Time: <span id="time">0</span>s</div>
-      <div>💯 Score: <span id="score">0</span></div>
+    <h1>Type It or Die</h1>
+    <p>Type the words fast! Miss one and it's over. Bonus time for hard words.</p>
+    <div class="word-display" id="word"></div>
+    <input type="text" id="text" autocomplete="off" placeholder="Type here..." />
+    <div class="info">
+      <div>Time: <span id="time">10</span>s</div>
+      <div>Score: <span id="score">0</span></div>
     </div>
-    <button class="start-btn" id="start-btn">Start Game</button>
-
-    <!-- AdSense Slot -->
-    <div style="margin-top: 20px;">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-7723689755297651"
-           data-ad-slot="6475259413"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-           (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+    <div class="leaderboard" id="leaderboard">
+      <h3>🏆 Global Highscores</h3>
+      <ul id="scores"></ul>
     </div>
-
-    <div class="leaderboard">
-      <h3>🏆 High Scores</h3>
-      <ol id="leaderboard"></ol>
-    </div>
-
-    <div class="share">
-      <button onclick="shareOnFacebook()">Share on Facebook</button>
-      <button onclick="shareOnTwitter()">Share on Twitter</button>
+    <div class="share-buttons">
+      <button onclick="shareTwitter()">Share on Twitter</button>
+      <button onclick="shareFacebook()">Share on Facebook</button>
     </div>
   </div>
 
-  <audio id="correctSound" src="https://www.soundjay.com/button/sounds/button-09.mp3" preload="auto"></audio>
-  <audio id="wrongSound" src="https://www.soundjay.com/button/sounds/button-10.mp3" preload="auto"></audio>
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <ins class="adsbygoogle"
+       style="display:block; text-align:center; margin-top: 30px"
+       data-ad-client="ca-pub-7723689755297651"
+       data-ad-slot="6475259413"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+  <!-- Sounds -->
+  <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
+  <audio id="failSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
 
   <script>
-    const words = [
-      // Standard words
-      "apple", "banana", "keyboard", "monitor", "future", "challenge",
-      "internet", "planet", "rocket", "science", "program", "focus",
-      "electric", "random", "space", "time", "speed", "victory", "level",
-      "danger", "fast", "typing", "score", "bonus", "type", "react",
-      "javascript", "html", "css", "input",
-      // Bonus words
-      "synchronization", "transcendental", "cryptocurrency", "neuroscience", "encyclopedia",
-      "microprocessor", "institutionalization", "photosynthesis", "extraterrestrial", "hypertextual"
-    ];
+    const easyWords = ["apple", "sun", "cat", "ball", "car", "dog", "home", "fish", "star", "cake", "milk", "book", "pen", "tree", "shoe"];
+    const hardWords = ["algorithm", "hypothesis", "cryptography", "juxtaposition", "miscellaneous"];
+    let words = [...easyWords, ...hardWords];
 
     const wordEl = document.getElementById("word");
-    const input = document.getElementById("input");
-    const timeEl = document.getElementById("time");
+    const text = document.getElementById("text");
     const scoreEl = document.getElementById("score");
-    const leaderboardEl = document.getElementById("leaderboard");
-    const startBtn = document.getElementById("start-btn");
-
-    const correctSound = document.getElementById("correctSound");
-    const wrongSound = document.getElementById("wrongSound");
+    const timeEl = document.getElementById("time");
+    const scoresList = document.getElementById("scores");
+    const successSound = document.getElementById("successSound");
+    const failSound = document.getElementById("failSound");
 
     let score = 0;
-    let time = 0;
+    let time = 10;
     let currentWord = "";
-    let interval;
+    let timerInterval;
 
-    function randomWord() {
-      return words[Math.floor(Math.random() * words.length)];
+    const supabaseUrl = "https://wtzfzuragddwggmdemqf.supabase.co";
+    const supabaseKey = "process.env.SUPABASE_KEY";
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    function getRandomWord() {
+      const idx = Math.floor(Math.random() * words.length);
+      return words[idx];
     }
 
-    function setNewWord() {
-      currentWord = randomWord();
-      wordEl.textContent = currentWord;
+    function displayWord() {
+      currentWord = getRandomWord();
+      wordEl.innerText = currentWord;
+    }
+
+    function updateScore() {
+      score++;
+      scoreEl.innerText = score;
+    }
+
+    function updateTime(bonus = 0) {
+      time += bonus;
+      timeEl.innerText = time;
+    }
+
+    function gameOver() {
+      failSound.play();
+      clearInterval(timerInterval);
+      text.disabled = true;
+      saveScore(score);
     }
 
     function startGame() {
-      score = 0;
-      time = 7;
-      input.disabled = false;
-      input.value = "";
-      input.focus();
-      setNewWord();
-      scoreEl.textContent = score;
-      timeEl.textContent = time;
-      startBtn.disabled = true;
-
-      interval = setInterval(() => {
+      displayWord();
+      text.focus();
+      timerInterval = setInterval(() => {
         time--;
-        timeEl.textContent = time;
-        if (time <= 0) {
-          endGame();
+        timeEl.innerText = time;
+        if (time === 0) {
+          gameOver();
         }
       }, 1000);
     }
 
-    function endGame() {
-      clearInterval(interval);
-      input.disabled = true;
-      wordEl.textContent = "Game Over!";
-      startBtn.disabled = false;
-      updateLeaderboard();
-      wrongSound.play();
-    }
+    text.addEventListener("input", e => {
+      const typedText = e.target.value.trim();
+      if (typedText.toLowerCase() === currentWord.toLowerCase()) {
+        successSound.play();
+        displayWord();
+        e.target.value = "";
+        updateScore();
 
-    input.addEventListener("input", () => {
-      if (input.value.trim().toLowerCase() === currentWord.toLowerCase()) {
-        score++;
-        scoreEl.textContent = score;
-        time += 1;
-        timeEl.textContent = time;
-        input.value = "";
-        setNewWord();
-        correctSound.play();
+        if (hardWords.includes(currentWord)) {
+          updateTime(3);
+        } else {
+          updateTime(1);
+        }
       }
     });
 
-    function updateLeaderboard() {
-      let scores = JSON.parse(localStorage.getItem("highScores")) || [];
-      scores.push(score);
-      scores.sort((a, b) => b - a);
-      scores = scores.slice(0, 5);
-      localStorage.setItem("highScores", JSON.stringify(scores));
-
-      leaderboardEl.innerHTML = scores
-        .map((s, i) => `<li>#${i + 1}: ${s}</li>`) 
-        .join("");
+    async function saveScore(newScore) {
+      const { error } = await supabase.from("highscores").insert([
+        { name: "Anonymous", score: newScore }
+      ]);
+      if (!error) loadScores();
     }
 
-    function shareOnFacebook() {
+    async function loadScores() {
+      const { data, error } = await supabase
+        .from("highscores")
+        .select("name, score")
+        .order("score", { ascending: false })
+        .limit(10);
+      if (!error) {
+        scoresList.innerHTML = data.map(entry => `<li>${entry.name}: ${entry.score}</li>`).join("");
+      }
+    }
+
+    function shareTwitter() {
       const url = encodeURIComponent(window.location.href);
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+      const text = encodeURIComponent(`I scored ${score} in Type It or Die! Can you beat me?`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
     }
 
-    function shareOnTwitter() {
+    function shareFacebook() {
       const url = encodeURIComponent(window.location.href);
-      const text = encodeURIComponent("Try to beat my score on 'Type it or Die'!");
-      window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
     }
 
-    window.addEventListener("load", updateLeaderboard);
-    startBtn.addEventListener("click", startGame);
+    startGame();
+    loadScores();
   </script>
 </body>
 </html>
-
