@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Type It or Die</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    #game, #gameOverScreen {
+      display: none;
+    }
+
+    .word {
+      font-size: 2rem;
+      margin: 1rem 0;
+    }
+
+    input {
+      padding: 0.5rem;
+      font-size: 1.2rem;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    button {
+      padding: 0.7rem 1.5rem;
+      font-size: 1.1rem;
+      background: #00bcd4;
+      border: none;
+      color: white;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #008c9e;
+    }
+
+    .score {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .share-btn {
+      background: #4caf50;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Type It or Die</h1>
+
+  <div id="startScreen">
+    <p>Skriv orden innan tiden tar slut. Klarar du det?</p>
+    <button onclick="startGame()">Starta spelet</button>
+  </div>
+
+  <div id="game">
+    <div class="word" id="currentWord">ord</div>
+    <input type="text" id="input" placeholder="Skriv här..." autocomplete="off" autofocus />
+    <div class="score" id="score">Poäng: 0 | Missar: 0</div>
+    <div id="timer">Tid kvar: <span id="timeLeft">0.0</span>s</div>
+  </div>
+
+  <div id="gameOverScreen">
+    <h2>Game Over</h2>
+    <p>Du klarade <span id="finalScore"></span> ord!</p>
+    <button onclick="startGame()">Spela igen</button>
+    <button class="share-btn" onclick="shareScore()">Dela resultat</button>
+  </div>
+
+  <script>
+    const words = [
+      "hund", "katt", "boll", "glass", "sommar", "blomma", "skor", "snabb", "långsam", "skola", 
+      "cykel", "robot", "sten", "sjö", "hatt", "dator", "äpple", "bok", "sol", "regn",
+      "knapp", "vägg", "spel", "röd", "blå", "grön", "vit", "gul", "svart", "snö", 
+      "banan", "resa", "ljus", "mörker", "lampa", "penna", "skärm", "hiss", "kaffe"
+    ];
+
+    let currentWord = "";
+    let score = 0;
+    let misses = 0;
+    let timeLimit = 2.0;
+    let timerInterval;
+
+    const wordDisplay = document.getElementById("currentWord");
+    const input = document.getElementById("input");
+    const scoreDisplay = document.getElementById("score");
+    const timerDisplay = document.getElementById("timeLeft");
+    const gameScreen = document.getElementById("game");
+    const startScreen = document.getElementById("startScreen");
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const finalScore = document.getElementById("finalScore");
+
+    function getRandomWord() {
+      return words[Math.floor(Math.random() * words.length)];
+    }
+
+    function startGame() {
+      score = 0;
+      misses = 0;
+      timeLimit = 2.0;
+
+      startScreen.style.display = "none";
+      gameScreen.style.display = "block";
+      gameOverScreen.style.display = "none";
+
+      nextWord();
+    }
+
+    function nextWord() {
+      currentWord = getRandomWord();
+      wordDisplay.textContent = currentWord;
+      input.value = "";
+      input.focus();
+
+      let timeLeft = timeLimit;
+      timerDisplay.textContent = timeLeft.toFixed(1);
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft -= 0.1;
+        timerDisplay.textContent = timeLeft.toFixed(1);
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          registerMiss();
+        }
+      }, 100);
+    }
+
+    input.addEventListener("input", () => {
+      if (input.value.trim() === currentWord) {
+        clearInterval(timerInterval);
+        score++;
+        timeLimit = Math.max(0.8, timeLimit - 0.05);
+        updateScore();
+        nextWord();
+      }
+    });
+
+    function registerMiss() {
+      misses++;
+      updateScore();
+      if (misses >= 3) {
+        endGame();
+      } else {
+        nextWord();
+      }
+    }
+
+    function updateScore() {
+      scoreDisplay.textContent = `Poäng: ${score} | Missar: ${misses}`;
+    }
+
+    function endGame() {
+      gameScreen.style.display = "none";
+      gameOverScreen.style.display = "block";
+      finalScore.textContent = score;
+    }
+
+    function shareScore() {
+      const text = `Jag klarade ${score} ord i "Type It or Die"! Testa själv: [DIN-LÄNK-HÄR]`;
+      if (navigator.share) {
+        navigator.share({ title: "Type It or Die", text });
+      } else {
+        prompt("Kopiera och dela detta:", text);
+      }
+    }
+  </script>
+</body>
+</html>
