@@ -2,399 +2,223 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Type It or Die</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Type It or Die!</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
   <style>
-  body {
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    background-size: cover;
-    background-attachment: fixed;
-    color: white;
-    font-family: 'Press Start 2P', cursive;
-    margin: 0;
-    padding: 0;
-  }
-    .game-container {
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
-  max-width: 600px;
-  margin: 50px auto;
-  text-align: center;
-}
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-button {
-  background: linear-gradient(45deg, #6a11cb, #2575fc);
-  color: white;
-  font-weight: 600;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  transition: background 0.3s, transform 0.3s;
-}
-
-button:hover {
-  background: linear-gradient(45deg, #2575fc, #6a11cb);
-  transform: scale(1.05);
-}
-.word-display {
-  font-size: 24px;
-  font-weight: bold;
-  color: #00ff00;
-  text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00;
-}
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.game-over {
-  animation: pulse 1s infinite;
-  color: red;
-  font-size: 30px;
-  font-weight: bold;
-}
-
+    body {
+      margin: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: radial-gradient(circle, #000 0%, #222 100%);
+      color: #00ffcc;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #111;
+      border: 4px double #00ffcc;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #00ffcc;
     }
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-    p.description {
+      font-size: 24px;
       margin-bottom: 20px;
-      font-size: 1.1rem;
-      color: #aaa;
     }
-    #nameInput, #textInput {
+    input, button {
+      font-family: 'Press Start 2P', cursive;
       padding: 10px;
-      font-size: 1.2rem;
-      width: 100%;
-      margin-bottom: 15px;
-      border-radius: 5px;
+      margin: 10px 0;
+      font-size: 14px;
       border: none;
       outline: none;
     }
-    #startBtn {
-      padding: 12px 20px;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 6px;
-      background: #2e8b57;
-      color: white;
+    #gameInput {
+      width: 80%;
+    }
+    button {
+      background-color: #00ffcc;
+      color: #000;
       cursor: pointer;
-      margin-bottom: 15px;
-      width: 100%;
-      transition: background 0.3s ease;
     }
-    #startBtn:hover {
-      background: #3cb371;
+    .hidden {
+      display: none;
     }
-    .word-display {
-      font-size: 2rem;
-      margin: 20px 0;
-      height: 50px;
-    }
-    .info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 1.2rem;
-      margin-bottom: 15px;
-      color: #ddd;
-    }
-    .leaderboard {
-      margin-top: 25px;
-      background: #2a2a2a;
-      padding: 20px;
-      border-radius: 10px;
-      max-height: 250px;
-      overflow-y: auto;
+    .scoreboard {
       text-align: left;
-    }
-    .leaderboard h3 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: #9acd32;
-    }
-    .leaderboard ul {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
-    .leaderboard li {
-      padding: 5px 0;
-      border-bottom: 1px solid #444;
-      font-size: 1.1rem;
-      color: #eee;
-    }
-    .share-buttons {
       margin-top: 20px;
     }
-    .share-buttons button {
-      margin: 5px;
-      padding: 10px 15px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 5px;
-      background: #2e8b57;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    .share-buttons button:hover {
-      background: #3cb371;
+    .socials {
+      margin-top: 20px;
     }
   </style>
-</head>
-<body>
-
-  <div class="game-container">
-    <h1>Type It or Die</h1>
-    <p class="description">Type the words fast! Miss one and it's over. Bonus time for hard words.</p>
-
-    <input id="nameInput" type="text" placeholder="Enter your name" maxlength="15" />
-    <button id="startBtn">Start Game</button>
-
-    <div class="word-display" id="word"></div>
-    <input id="textInput" type="text" placeholder="Type here..." autocomplete="off" disabled />
-
-    <div class="info">
-      <div>Time: <span id="time">10</span>s</div>
-      <div>Score: <span id="score">0</span></div>
-    </div>
-
-    <div class="leaderboard" id="leaderboard">
-      <h3>🏆 Global Highscores</h3>
-      <ul id="scores"></ul>
-    </div>
-
-    <div class="share-buttons">
-      <button onclick="shareTwitter()">Share on Twitter</button>
-      <button onclick="shareFacebook()">Share on Facebook</button>
-    </div>
-  </div>
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651" crossorigin="anonymous"></script>
-  <ins class="adsbygoogle"
-       style="display:block; text-align:center; margin-top: 30px"
-       data-ad-client="ca-pub-7723689755297651"
-       data-ad-slot="6475259413"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Type It or Die!</h1>
+
+    <div id="ads">
+      <!-- Ad Block -->
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-7723689755297651"
+        data-ad-slot="6475259413"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <input type="text" id="usernameInput" placeholder="Enter your name..." />
+    <br>
+    <button id="startBtn">Start Game</button>
+
+    <div id="gameSection" class="hidden">
+      <p><strong>Word:</strong> <span id="currentWord">---</span></p>
+      <input type="text" id="gameInput" autocomplete="off" />
+      <p>Score: <span id="score">0</span> | Time left: <span id="time">10</span>s</p>
+    </div>
+
+    <div class="scoreboard">
+      <h3>🏆 Global Highscore</h3>
+      <ol id="highscoreList"></ol>
+    </div>
+
+    <div class="socials">
+      <p>Share the challenge:</p>
+      <a href="https://twitter.com/intent/tweet?text=Try%20to%20beat%20my%20score%20in%20Type%20It%20or%20Die!&url=https://type-it-or-die-v3.vercel.app" target="_blank">Share on Twitter</a>
+    </div>
+  </div>
 
   <!-- Sounds -->
-  <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
-  <audio id="failSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+  <audio id="correctSound" src="correct.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="wrong.mp3" preload="auto"></audio>
 
-  <!-- Supabase SDK -->
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
   <script>
-    window.onload = () => {
-      // Supabase config
-      const supabaseUrl = "https://wtzfzuragddwggmdemqf.supabase.co";
-      const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0";
+    const supabase = supabase.createClient(
+      'https://wtzfzuragddwggmdemqf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0'
+    );
 
-      const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    const easyWords = [..."apple fish ball moon tree red book code fire love blue sun bird rain cake wind shoe star game hat rock song time smile car water desk phone map pen face cat dog cup"]; 
+    const hardWords = ["phenomenon", "hypothetical", "juxtaposition", "xenophobia", "aesthetics", "rendezvous", "quizzical", "onomatopoeia", "anachronism", "discombobulated"];
 
-      // Word lists
-      const easyWords = ["apple","sun","cat","ball","car","dog","home","fish","star","cake","milk","book","pen","tree","shoe","red","blue","green","bird","rain","snow","wind","fire","cloud","leaf","rock","road","fish","bird","river","mountain","sky","grass","mouse","phone","chair","table","glass","cup","hat","door","clock","light","water","bread"];
-      const hardWords = ["algorithm","hypothesis","cryptography","juxtaposition","miscellaneous","quizzical","xylophone","zephyr","mnemonic","synecdoche"];
+    const startBtn = document.getElementById("startBtn");
+    const gameSection = document.getElementById("gameSection");
+    const gameInput = document.getElementById("gameInput");
+    const currentWord = document.getElementById("currentWord");
+    const scoreDisplay = document.getElementById("score");
+    const timeDisplay = document.getElementById("time");
+    const usernameInput = document.getElementById("usernameInput");
+    const highscoreList = document.getElementById("highscoreList");
 
-      let words = [...easyWords, ...hardWords];
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
 
-      // DOM elements
-      const nameInput = document.getElementById("nameInput");
-      const startBtn = document.getElementById("startBtn");
-      const wordEl = document.getElementById("word");
-      const textInput = document.getElementById("textInput");
-      const scoreEl = document.getElementById("score");
-      const timeEl = document.getElementById("time");
-      const scoresList = document.getElementById("scores");
-      const successSound = document.getElementById("successSound");
-      const failSound = document.getElementById("failSound");
+    let score = 0;
+    let time = 10;
+    let timer;
 
-      let score = 0;
-      let time = 10;
-      let currentWord = "";
-      let timerInterval;
-      let playerName = "";
+    function getRandomWord() {
+      return Math.random() < 0.85
+        ? easyWords[Math.floor(Math.random() * easyWords.length)]
+        : hardWords[Math.floor(Math.random() * hardWords.length)];
+    }
 
-      // Helper functions
-      function getRandomWord() {
-        const idx = Math.floor(Math.random() * words.length);
-        return words[idx];
+    function nextWord() {
+      const word = getRandomWord();
+      currentWord.textContent = word;
+      gameInput.value = "";
+    }
+
+    function startGame() {
+      if (!usernameInput.value.trim()) {
+        alert("Please enter your name!");
+        return;
       }
 
-      function displayWord() {
-        currentWord = getRandomWord();
-        wordEl.innerText = currentWord;
-      }
+      startBtn.classList.add("hidden");
+      usernameInput.classList.add("hidden");
+      gameSection.classList.remove("hidden");
+      gameInput.focus();
+      score = 0;
+      time = 10;
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = time;
 
-      function updateScore() {
-        score++;
-        scoreEl.innerText = score;
-      }
+      nextWord();
 
-      function updateTime() {
-        timeEl.innerText = time;
-      }
-
-      function gameOver() {
-        clearInterval(timerInterval);
-        failSound.play();
-        alert(`Game Over! ${playerName}, your final score is ${score}.`);
-
-        // Save score to Supabase
-        saveScore(playerName, score);
-
-        // Reset UI
-        startBtn.disabled = false;
-        nameInput.style.display = "block";
-        textInput.disabled = true;
-        wordEl.innerText = "";
-        score = 0;
-        time = 10;
-        scoreEl.innerText = score;
-        timeEl.innerText = time;
-      }
-
-      async function saveScore(name, score) {
-        try {
-          const { data, error } = await supabase
-            .from('highscores')
-            .insert([{ username: name, score: score }]);
-
-          if (error) {
-            console.error('Error saving score:', error.message);
-          } else {
-            loadScores(); // Reload leaderboard
-          }
-        } catch (err) {
-          console.error(err);
+      timer = setInterval(() => {
+        time--;
+        timeDisplay.textContent = time;
+        if (time <= 0) {
+          clearInterval(timer);
+          endGame();
         }
-      }
+      }, 1000);
+    }
 
-      async function loadScores() {
-        try {
-          let { data, error } = await supabase
-            .from('highscores')
-            .select('*')
-            .order('score', { ascending: false })
-            .limit(10);
+    function endGame() {
+      gameSection.classList.add("hidden");
+      startBtn.classList.remove("hidden");
+      usernameInput.classList.remove("hidden");
 
-          if (error) {
-            console.error('Error loading scores:', error.message);
-            scoresList.innerHTML = "<li>Failed to load scores</li>";
-            return;
-          }
-
-          scoresList.innerHTML = "";
-          if (data.length === 0) {
-            scoresList.innerHTML = "<li>No highscores yet</li>";
-            return;
-          }
-          data.forEach(({ username, score }) => {
-            const li = document.createElement("li");
-            li.textContent = `${username} — ${score}`;
-            scoresList.appendChild(li);
-          });
-        } catch (err) {
-          console.error(err);
-          scoresList.innerHTML = "<li>Error loading scores</li>";
-        }
-      }
-
-      function startGame() {
-        playerName = nameInput.value.trim();
-        if (playerName === "") {
-          alert("Please enter your name to start.");
-          return;
-        }
-
-        // Hide name input and disable start button
-        nameInput.style.display = "none";
-        startBtn.disabled = true;
-
-        // Enable typing input and focus
-        textInput.disabled = false;
-        textInput.value = "";
-        textInput.focus();
-
-        score = 0;
-        time = 10;
-        updateScore();
-        updateTime();
-
-        displayWord();
-
-        timerInterval = setInterval(() => {
-          time--;
-          updateTime();
-
-          if (time <= 0) {
-            gameOver();
-          }
-        }, 1000);
-      }
-
-      // Listen for start button
-      startBtn.addEventListener("click", startGame);
-
-      // Listen for enter key on textInput
-      textInput.addEventListener("keydown", e => {
-        if (e.key === "Enter") {
-          if (textInput.value.trim().toLowerCase() === currentWord.toLowerCase()) {
-            successSound.play();
-            updateScore();
-            // Add bonus time for hard words
-            if (hardWords.includes(currentWord)) {
-              time += 3;
-            } else {
-              time += 1;
-            }
-            if (time > 60) time = 60; // max 60s
-            updateTime();
-            textInput.value = "";
-            displayWord();
-          } else {
-            gameOver();
-          }
-        }
-      });
-
-      // Load leaderboard on page load
+      saveScore(usernameInput.value.trim(), score);
       loadScores();
+    }
 
-      // Sharing functions
-      window.shareTwitter = function() {
-        const url = encodeURIComponent(window.location.href);
-        const text = encodeURIComponent(`I scored ${score} points playing Type It or Die! Try it yourself:`);
-        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
+    gameInput.addEventListener("input", () => {
+      if (gameInput.value.trim().toLowerCase() === currentWord.textContent.toLowerCase()) {
+        score += 1;
+        time += currentWord.textContent.length > 10 ? 3 : 1;
+        scoreDisplay.textContent = score;
+        timeDisplay.textContent = time;
+        correctSound.play();
+        nextWord();
+      } else if (gameInput.value.length >= currentWord.textContent.length) {
+        wrongSound.play();
+        gameInput.value = "";
       }
+    });
 
-      window.shareFacebook = function() {
-        const url = encodeURIComponent(window.location.href);
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+    startBtn.addEventListener("click", startGame);
+
+    async function saveScore(username, score) {
+      try {
+        await supabase.from('highscores').insert([{ username, score }]);
+      } catch (error) {
+        console.error("Error saving score:", error.message);
       }
     }
+
+    async function loadScores() {
+      const { data, error } = await supabase
+        .from('highscores')
+        .select('*')
+        .order('score', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error("Error loading scores:", error.message);
+        return;
+      }
+
+      highscoreList.innerHTML = "";
+      data.forEach(entry => {
+        const li = document.createElement("li");
+        li.textContent = `${entry.username}: ${entry.score}`;
+        highscoreList.appendChild(li);
+      });
+    }
+
+    loadScores();
   </script>
 </body>
 </html>
-
