@@ -2,221 +2,159 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Type It or Die!</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Press Start 2P', cursive;
-      background: radial-gradient(circle, #000 0%, #222 100%);
-      color: #00ffcc;
-      text-align: center;
-      overflow-x: hidden;
-    }
-    .container {
-      max-width: 600px;
-      margin: 50px auto;
-      background: #111;
-      border: 4px double #00ffcc;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px #00ffcc;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    input, button {
-      font-family: 'Press Start 2P', cursive;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 14px;
-      border: none;
-      outline: none;
-    }
-    #gameInput {
-      width: 80%;
-    }
-    button {
-      background-color: #00ffcc;
-      color: #000;
-      cursor: pointer;
-    }
-    .hidden {
-      display: none;
-    }
-    .scoreboard {
-      text-align: left;
-      margin-top: 20px;
-    }
-    .socials {
-      margin-top: 20px;
-    }
-  </style>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Type It or Die - Retro</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.ico" />
+  
   <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651" crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7723689755297651"
+    crossorigin="anonymous"></script>
 </head>
-
 <body>
   <div class="container">
-    <h1>Type It or Die!</h1>
-
-    <div id="ads">
-      <!-- Ad Block -->
+    <h1 class="title">TYPE IT OR DIE</h1>
+    
+    <div id="ad">
       <ins class="adsbygoogle"
         style="display:block"
         data-ad-client="ca-pub-7723689755297651"
         data-ad-slot="6475259413"
         data-ad-format="auto"
         data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
     </div>
 
-    <input type="text" id="usernameInput" placeholder="Enter your name..." />
-    <br>
-    <button id="startBtn">Start Game</button>
+    <div class="game-box">
+      <input type="text" id="usernameInput" placeholder="Enter your name" />
+      <button id="startBtn">Start Game</button>
+      
+      <div id="gameArea" style="display:none;">
+        <div id="wordDisplay">WORD</div>
+        <input type="text" id="wordInput" autocomplete="off" />
+        <div id="timer">Time: 10</div>
+        <div id="score">Score: 0</div>
+      </div>
 
-    <div id="gameSection" class="hidden">
-      <p><strong>Word:</strong> <span id="currentWord">---</span></p>
-      <input type="text" id="gameInput" autocomplete="off" />
-      <p>Score: <span id="score">0</span> | Time left: <span id="time">10</span>s</p>
-    </div>
-
-    <div class="scoreboard">
-      <h3>🏆 Global Highscore</h3>
-      <ol id="highscoreList"></ol>
-    </div>
-
-    <div class="socials">
-      <p>Share the challenge:</p>
-      <a href="https://twitter.com/intent/tweet?text=Try%20to%20beat%20my%20score%20in%20Type%20It%20or%20Die!&url=https://type-it-or-die-v3.vercel.app" target="_blank">Share on Twitter</a>
+      <div id="highscores">
+        <h2>Global Highscores</h2>
+        <ul id="scoreList"></ul>
+      </div>
     </div>
   </div>
 
-  <!-- Sounds -->
-  <audio id="correctSound" src="correct.mp3" preload="auto"></audio>
-  <audio id="wrongSound" src="wrong.mp3" preload="auto"></audio>
+  <!-- Ljud -->
+  <audio id="correctSound" src="sounds/correct.mp3" preload="auto"></audio>
+  <audio id="wrongSound" src="sounds/wrong.mp3" preload="auto"></audio>
 
-  <!-- Supabase -->
+  <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
   <script>
-    const supabase = supabase.createClient(
-      'https://wtzfzuragddwggmdemqf.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0'
-    );
+    const supabaseUrl = "https://wtzfzuragddwggmdemqf.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0emZ6dXJhZ2Rkd2dnbWRlbXFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDAxOTEsImV4cCI6MjA3MDA3NjE5MX0.eNFGNive5js3JYBnKpVMPlI5Xi0CKdxfUWNklRzA9F0";
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    const easyWords = [..."apple fish ball moon tree red book code fire love blue sun bird rain cake wind shoe star game hat rock song time smile car water desk phone map pen face cat dog cup"]; 
-    const hardWords = ["phenomenon", "hypothetical", "juxtaposition", "xenophobia", "aesthetics", "rendezvous", "quizzical", "onomatopoeia", "anachronism", "discombobulated"];
-
-    const startBtn = document.getElementById("startBtn");
-    const gameSection = document.getElementById("gameSection");
-    const gameInput = document.getElementById("gameInput");
-    const currentWord = document.getElementById("currentWord");
-    const scoreDisplay = document.getElementById("score");
-    const timeDisplay = document.getElementById("time");
-    const usernameInput = document.getElementById("usernameInput");
-    const highscoreList = document.getElementById("highscoreList");
-
-    const correctSound = document.getElementById("correctSound");
-    const wrongSound = document.getElementById("wrongSound");
-
+    let currentWord = "";
     let score = 0;
     let time = 10;
-    let timer;
+    let timerInterval;
+    let username = "";
+
+    const words = [
+      "space", "laser", "cyber", "retro", "pixel", "galaxy", "neon", "type", "die", "warp", "robot",
+      "rocket", "blast", "alien", "light", "code", "hack", "loop", "fast", "doom",
+      "titanium", "quantum", "teleport", "universe", "asteroid", "supernova", "android"
+    ];
 
     function getRandomWord() {
-      return Math.random() < 0.85
-        ? easyWords[Math.floor(Math.random() * easyWords.length)]
-        : hardWords[Math.floor(Math.random() * hardWords.length)];
-    }
-
-    function nextWord() {
-      const word = getRandomWord();
-      currentWord.textContent = word;
-      gameInput.value = "";
+      return words[Math.floor(Math.random() * words.length)];
     }
 
     function startGame() {
-      if (!usernameInput.value.trim()) {
-        alert("Please enter your name!");
-        return;
-      }
+      username = document.getElementById("usernameInput").value || "Anonymous";
+      document.getElementById("usernameInput").style.display = "none";
+      document.getElementById("startBtn").style.display = "none";
+      document.getElementById("gameArea").style.display = "block";
+      document.getElementById("wordInput").focus();
 
-      startBtn.classList.add("hidden");
-      usernameInput.classList.add("hidden");
-      gameSection.classList.remove("hidden");
-      gameInput.focus();
       score = 0;
       time = 10;
-      scoreDisplay.textContent = score;
-      timeDisplay.textContent = time;
+      document.getElementById("score").textContent = `Score: ${score}`;
+      document.getElementById("timer").textContent = `Time: ${time}`;
+      showNewWord();
 
-      nextWord();
-
-      timer = setInterval(() => {
+      timerInterval = setInterval(() => {
         time--;
-        timeDisplay.textContent = time;
+        document.getElementById("timer").textContent = `Time: ${time}`;
         if (time <= 0) {
-          clearInterval(timer);
           endGame();
         }
       }, 1000);
     }
 
-    function endGame() {
-      gameSection.classList.add("hidden");
-      startBtn.classList.remove("hidden");
-      usernameInput.classList.remove("hidden");
-
-      saveScore(usernameInput.value.trim(), score);
-      loadScores();
+    function showNewWord() {
+      currentWord = getRandomWord();
+      document.getElementById("wordDisplay").textContent = currentWord;
+      document.getElementById("wordInput").value = "";
     }
 
-    gameInput.addEventListener("input", () => {
-      if (gameInput.value.trim().toLowerCase() === currentWord.textContent.toLowerCase()) {
-        score += 1;
-        time += currentWord.textContent.length > 10 ? 3 : 1;
-        scoreDisplay.textContent = score;
-        timeDisplay.textContent = time;
-        correctSound.play();
-        nextWord();
-      } else if (gameInput.value.length >= currentWord.textContent.length) {
-        wrongSound.play();
-        gameInput.value = "";
-      }
-    });
+    function endGame() {
+      clearInterval(timerInterval);
+      document.getElementById("gameArea").style.display = "none";
+      document.getElementById("startBtn").style.display = "block";
+      document.getElementById("usernameInput").style.display = "block";
 
-    startBtn.addEventListener("click", startGame);
+      saveScore();
+    }
 
-    async function saveScore(username, score) {
-      try {
-        await supabase.from('highscores').insert([{ username, score }]);
-      } catch (error) {
-        console.error("Error saving score:", error.message);
+    async function saveScore() {
+      const { error } = await supabase
+        .from("highscores")
+        .insert([{ username, score }]);
+      if (error) {
+        console.error("Error saving score:", error);
+      } else {
+        loadScores();
       }
     }
 
     async function loadScores() {
       const { data, error } = await supabase
-        .from('highscores')
-        .select('*')
-        .order('score', { ascending: false })
+        .from("highscores")
+        .select("*")
+        .order("score", { ascending: false })
         .limit(10);
-
       if (error) {
-        console.error("Error loading scores:", error.message);
-        return;
+        console.error("Error loading scores:", error);
+      } else {
+        const list = document.getElementById("scoreList");
+        list.innerHTML = "";
+        data.forEach((entry) => {
+          const li = document.createElement("li");
+          li.textContent = `${entry.username}: ${entry.score}`;
+          list.appendChild(li);
+        });
       }
-
-      highscoreList.innerHTML = "";
-      data.forEach(entry => {
-        const li = document.createElement("li");
-        li.textContent = `${entry.username}: ${entry.score}`;
-        highscoreList.appendChild(li);
-      });
     }
+
+    document.getElementById("startBtn").addEventListener("click", startGame);
+    document.getElementById("wordInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        if (this.value.trim().toLowerCase() === currentWord.toLowerCase()) {
+          document.getElementById("correctSound").play();
+          score++;
+          time += 2;
+          document.getElementById("score").textContent = `Score: ${score}`;
+          showNewWord();
+        } else {
+          document.getElementById("wrongSound").play();
+          time -= 2;
+        }
+      }
+    });
 
     loadScores();
   </script>
